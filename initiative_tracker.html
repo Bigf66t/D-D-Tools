@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>D&D Initiative Tracker</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    .sortable-list {
+      padding: 0;
+    }
+
+    .sortable-item {
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f7f7f7;
+      cursor: move;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sortable-item span {
+      margin-right: 10px;
+    }
+
+    .initiative-input {
+      width: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <h1>D&D Initiative Tracker</h1>
+    <div class="form-group">
+      <label for="playerName">Player Name:</label>
+      <input type="text" class="form-control" id="playerName" placeholder="Name">
+      <label for="initiative">Initiative:</label>
+      <input type="number" class="form-control" id="initiative" placeholder="Initiative">
+      <label for="status">Status:</label>
+      <input type="text" class="form-control" id="status" placeholder="Status">
+    </div>
+    <button type="button" class="btn btn-primary" id="addPlayerBtn">Add Player</button>
+    <button type="button" class="btn btn-secondary" id="sortBtn">Sort by Initiative</button>
+    <ul class="list-group mt-4 sortable-list" id="playerList">
+    </ul>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Initialize jQuery UI sortable
+      $("#playerList").sortable();
+
+      $("#addPlayerBtn").click(function() {
+        var playerName = $("#playerName").val();
+        var initiative = $("#initiative").val();
+        var status = $("#status").val();
+        if (playerName && initiative) {
+          // Create new list item with player name, initiative, and status
+          var listItem = $("<li></li>").addClass("list-group-item sortable-item");
+
+          // Player name element
+          var playerNameElem = $("<span></span>").text(playerName);
+          listItem.append(playerNameElem);
+
+          // Initiative input field
+          var initiativeInput = $("<input>").addClass("form-control initiative-input").val(initiative);
+          listItem.append(initiativeInput);
+
+          // Status input field
+          var statusInput = $("<input>").addClass("form-control status-input").val(status);
+          listItem.append(statusInput);
+
+          // Remove button
+          var removeBtn = $("<button></button>").addClass("btn btn-sm btn-danger remove-btn").text("Remove");
+          removeBtn.click(function() {
+            $(this).parent().remove();
+          });
+          listItem.append(removeBtn);
+
+          // Append to player list
+          $("#playerList").append(listItem);
+
+          // Clear input fields
+          $("#playerName").val("");
+          $("#initiative").val("");
+          $("#status").val("");
+        }
+      });
+
+      $("#sortBtn").click(function() {
+        var sortedItems = $("#playerList li").sort(function(a, b) {
+          var initiativeA = parseInt($(a).find(".initiative-input").val());
+          var initiativeB = parseInt($(b).find(".initiative-input").val());
+          return initiativeB - initiativeA;
+        });
+        $("#playerList").append(sortedItems);
+      });
+    });
+  </script>
+</body>
+</html>
